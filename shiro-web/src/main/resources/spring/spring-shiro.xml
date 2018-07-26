@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!-- 配置 shiro 拦截器 -->
+    <bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
+        <property name="securityManager" ref="securityManager"/>
+        <!-- 登陆页-->
+        <property name="loginUrl" value="login.html"/>
+        <!-- 未认证跳转页-->
+        <property name="unauthorizedUrl" value="403.html"/>
+
+       <property name="filterChainDefinitions">
+           <value>
+               /login.html = anon
+                /submitLoign = anon
+                /* = authc
+           </value>
+       </property>
+
+    </bean>
+    <!-- SecurityManager对象 -->
+    <bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
+        <property name="realm" ref="customRealm"/>
+    </bean>
+    <bean id="customRealm" class="com.shiro.web.realm.CustomRealm">
+        <property name="credentialsMatcher" ref="credentialsMatcher"/>
+    </bean>
+
+    <bean id="credentialsMatcher" class="org.apache.shiro.authc.credential.HashedCredentialsMatcher">
+        <!-- 加密算法-->
+        <property name="hashAlgorithmName" value="md5"/>
+        <!-- 加密次数-->
+        <property name="hashIterations" value="1"/>
+    </bean>
+</beans>
