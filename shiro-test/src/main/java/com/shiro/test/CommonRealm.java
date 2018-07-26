@@ -6,8 +6,10 @@ import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.SimpleAuthenticationInfo;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
+import org.apache.shiro.crypto.hash.Md5Hash;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
+import org.apache.shiro.util.ByteSource;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -21,7 +23,7 @@ public class CommonRealm extends AuthorizingRealm {
 
 	Map<String,String> userMap = new HashMap<String, String>(16);
 	{
-		userMap.put("bxz","bxz021213");
+		userMap.put("bxz","b00a9e278c0eff85e2d877f35c0e5e9c");
 		super.setName("custName");
 	}
 
@@ -82,7 +84,8 @@ public class CommonRealm extends AuthorizingRealm {
 		}
 
 		SimpleAuthenticationInfo authenticationInfo = new SimpleAuthenticationInfo(userName,password,"custName");
-
+		// shiro加密-加盐
+		authenticationInfo.setCredentialsSalt(ByteSource.Util.bytes("bxz"));
 		System.out.println("userName:"+userName);
 		System.out.println("password:"+password);
 		return authenticationInfo;
@@ -96,5 +99,11 @@ public class CommonRealm extends AuthorizingRealm {
 	 */
 	private String getPasswordByUserName(String userName) {
 		return userMap.get(userName);
+	}
+	public static void main(String[] args) {
+		Md5Hash md5Hash = new Md5Hash("bxz021213");
+		System.out.println(md5Hash.toString());
+		Md5Hash md5HashSalt = new Md5Hash("bxz021213","bxz");
+		System.out.println("salt:"+md5HashSalt.toString());
 	}
 }
